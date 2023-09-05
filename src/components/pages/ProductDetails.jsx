@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col } from "reactstrap";
 import { useParams } from "react-router-dom";
 import products from "../../assets/data/products";
@@ -36,54 +36,65 @@ const ProductDetails = () => {
     category,
   } = product;
 
-  const [reviews, setReviews] = useState(initialReviews);
-
   const relatedProducts = products
     .filter((item) => item.category === category && item.id !== id)
     .slice(0, 4);
 
-   const submitHandler = (e) => {
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    const storedReviews = localStorage.getItem("reviews");
+    if (storedReviews) {
+      setReviews(JSON.parse(storedReviews));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("reviews", JSON.stringify(reviews));
+  }, [reviews]);
+
+  const submitHandler = (e) => {
     e.preventDefault();
-  
+
     let hasError = false;
-  
+
     // Check if a rating is selected
     if (rating === null) {
       toast.error("Please select a rating");
       hasError = true;
     }
-  
+
     // Check if name field is empty
     if (reviewUser.current.value.trim() === "") {
       toast.error("Please enter your name");
       hasError = true;
     }
-  
+
     // Check if message field is empty
     if (reviewMsg.current.value.trim() === "") {
       toast.error("Please enter your message");
       hasError = true;
     }
-  
+
     if (hasError) {
       return;
     }
-  
+
     const reviewUserName = reviewUser.current.value;
     const reviewUserMsg = reviewMsg.current.value;
-  
+
     const reviewObj = {
       name: reviewUserName,
       rating,
       message: reviewUserMsg,
     };
-  
+
     setReviews((prevReviews) => [...prevReviews, reviewObj]);
-  
+
     toast.success("Review submitted");
-  
+
     e.target.reset();
-  
+
     setRating(null);
     setClicked(false);
   };
@@ -211,7 +222,6 @@ const ProductDetails = () => {
                             type="text"
                             placeholder="Enter name"
                             ref={reviewUser}
-                            
                           />
                         </div>
                         <div className="form-group rating-group">
@@ -277,7 +287,6 @@ const ProductDetails = () => {
                             type="text"
                             placeholder="Review Message..."
                             ref={reviewMsg}
-                            
                           />
                         </div>
                         <motion.button
