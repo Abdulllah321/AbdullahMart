@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { Container, Row, Col, Form, FormGroup } from "reactstrap";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../../custom hook/useAuth";
 import { toast } from "react-toastify";
 import Helmet from "../Helmet/Helmet";

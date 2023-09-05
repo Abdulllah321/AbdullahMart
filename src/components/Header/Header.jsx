@@ -39,7 +39,7 @@ const Header = () => {
       if (storedCartItems) {
         dispatch(cartActions.loadCartItems(JSON.parse(storedCartItems)));
       }
-    }, []);
+    }, [dispatch]);
 
   const navigate = useNavigate();
   const { currentUser } = useAuth();

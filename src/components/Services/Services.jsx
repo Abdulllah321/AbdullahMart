@@ -2,7 +2,7 @@ import React from "react";
 import { Container, Row, Col } from "reactstrap";
 import { motion } from "framer-motion";
 import "./services.css";
-import { TbTruckDelivery } from "react-icons/tb";
+// import { TbTruckDelivery } from "react-icons/tb";
 
 import serviceData from "../../assets/data/serviceData";
 

@@ -11,7 +11,6 @@ import ProductList from "../UI/ProductsList";
 
 const Shops = () => {
   const [productsData, setProductsData] = useState(products);
-  const [sortOrder, setSortOrder] = useState("ascending");
 
   const handleFilter = (e) => {
     const filterValue = e.target.value;
@@ -68,7 +67,6 @@ const Shops = () => {
 
   const handleSort = (e) => {
     const sortValue = e.target.value;
-    setSortOrder(sortValue);
 
     const sortedProducts = [...productsData].sort((a, b) => {
       if (sortValue === "ascending") {
@@ -113,7 +111,11 @@ const Shops = () => {
             </Col>
             <Col lg="6" md="12" sm="12">
               <div className="search-box">
-                <input type="text" placeholder="Search..." onChange={handleSearch} />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  onChange={handleSearch}
+                />
                 <span>
                   <FiSearch />
                 </span>

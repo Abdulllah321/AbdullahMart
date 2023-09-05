@@ -26,6 +26,9 @@ const localStorageReviews = () => {
 
 
 const ProductDetails = () => {
+
+
+
   const [hoverRating, setHoverRating] = useState(null);
   const dispatch = useDispatch();
   const reviewForm = useRef(null);
@@ -39,7 +42,6 @@ const ProductDetails = () => {
     productName,
     price,
     description,
-    reviews: initialReviews,
     avgRating,
     shortDesc,
     category,
@@ -54,7 +56,7 @@ const ProductDetails = () => {
   const reviewMsg = useRef();
 
   const [rating, setRating] = useState(null);
-  const [clicked, setClicked] = useState(false);
+  // const [clicked, setClicked] = useState(false);
 
 useEffect(()=>{
  localStorage.setItem("reviews", JSON.stringify(reviews));
@@ -105,11 +107,10 @@ useEffect(()=>{
     e.target.reset();
 
     setRating(null);
-    setClicked(false);
+    // setClicked(false);
   };
 
   const filteredReviews = reviews.filter((item) => item.id === id);
-  const numberOfRatings = filteredReviews.length;
 
   const addToCart = () => {
     dispatch(
@@ -125,7 +126,7 @@ useEffect(()=>{
 
   function handleClick(rating) {
     setRating(rating);
-    setClicked(true);
+    // setClicked(true);
   }
 
   const starElements = Array.from(

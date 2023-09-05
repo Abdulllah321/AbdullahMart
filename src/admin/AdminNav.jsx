@@ -3,13 +3,13 @@ import { Container } from "reactstrap";
 import { PiMagnifyingGlassBold } from "react-icons/pi";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { GrSettingsOption } from "react-icons/gr";
-import useAuth from "../custom hook/useAuth";
+// import useAuth from "../custom hook/useAuth";
 import { motion } from "framer-motion";
 import user from "../assets/images/user-icon.png";
 import "../components/styles/admin-nav.css";
 
 const AdminNav = () => {
-  const { currentUser } = useAuth();
+  // const { currentUser } = useAuth();
 
   return (
     <header className="admin-header">

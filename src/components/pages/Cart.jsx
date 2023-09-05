@@ -21,7 +21,7 @@ const Cart = () => {
     if (storedCartItems) {
       dispatch(cartActions.loadCartItems(JSON.parse(storedCartItems)));
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <Helmet title="Cart">

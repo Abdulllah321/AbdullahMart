@@ -1,7 +1,7 @@
 import React from "react";
 import { BiSolidCartAdd } from "react-icons/bi";
 import { motion } from "framer-motion";
-import { Col, Row } from "reactstrap";
+import { Col } from "reactstrap";
 import "../styles/product-card.css";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
