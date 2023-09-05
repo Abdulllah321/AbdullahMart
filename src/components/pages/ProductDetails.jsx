@@ -12,12 +12,21 @@ import { useDispatch } from "react-redux";
 import { cartActions } from "../redux/slices/cartSlice";
 import { toast } from "react-toastify";
 
+
+
+const localStorageReviews = () => {
+  let rev = localStorage.getItem("reviews");
+
+  if (rev) {
+    return JSON.parse(localStorage.getItem("reviews"));
+  } else {
+    return [];
+  }
+};
+
+
 const ProductDetails = () => {
-  const [clicked, setClicked] = useState(null);
   const [hoverRating, setHoverRating] = useState(null);
-  const [rating, setRating] = useState(null);
-  const reviewUser = useRef("");
-  const reviewMsg = useRef("");
   const dispatch = useDispatch();
   const reviewForm = useRef(null);
 
@@ -40,18 +49,17 @@ const ProductDetails = () => {
     .filter((item) => item.category === category && item.id !== id)
     .slice(0, 4);
 
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState(localStorageReviews());
+  const reviewUser = useRef();
+  const reviewMsg = useRef();
 
-  useEffect(() => {
-    const storedReviews = localStorage.getItem("reviews");
-    if (storedReviews) {
-      setReviews(JSON.parse(storedReviews));
-    }
-  }, []);
+  const [rating, setRating] = useState(null);
+  const [clicked, setClicked] = useState(false);
 
-  useEffect(() => {
-    localStorage.setItem("reviews", JSON.stringify(reviews));
-  }, [reviews]);
+useEffect(()=>{
+ localStorage.setItem("reviews", JSON.stringify(reviews));
+},[reviews])
+
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -84,6 +92,7 @@ const ProductDetails = () => {
     const reviewUserMsg = reviewMsg.current.value;
 
     const reviewObj = {
+      id: id, // Assign the id of the current product
       name: reviewUserName,
       rating,
       message: reviewUserMsg,
@@ -99,6 +108,9 @@ const ProductDetails = () => {
     setClicked(false);
   };
 
+  const filteredReviews = reviews.filter((item) => item.id === id);
+  const numberOfRatings = filteredReviews.length;
+
   const addToCart = () => {
     dispatch(
       cartActions.addItem({
@@ -110,6 +122,7 @@ const ProductDetails = () => {
     );
     toast.success("Product added to cart successfully");
   };
+
   function handleClick(rating) {
     setRating(rating);
     setClicked(true);
@@ -156,7 +169,7 @@ const ProductDetails = () => {
                     )}
                   </div>
                   <p>
-                    (<span>{reviews.length}</span> ratings)
+                    (<span>{filteredReviews.length}</span> ratings)
                   </p>
                 </div>
 
@@ -184,18 +197,19 @@ const ProductDetails = () => {
         <Container>
           <Row>
             <Col lg="12">
-              <div className="tab-wrapper d-flex align-items-center gap-5">
+              <div className="tab-wrapper d-flex align-items-center gap-5 mb-4 ">
                 <h6
                   className={`${tab === "desc" ? "active-tab" : ""}`}
                   onClick={() => setTab("desc")}
                 >
                   Description
                 </h6>
+
                 <h6
                   className={`${tab === "rev" ? "active-tab" : ""}`}
                   onClick={() => setTab("rev")}
                 >
-                  Reviews ({reviews.length})
+                  Reviews ({filteredReviews.length})
                 </h6>
               </div>
               {tab === "desc" ? (
@@ -206,9 +220,9 @@ const ProductDetails = () => {
                 <div className="product-review ">
                   <div className="review-wrapper">
                     <ul>
-                      {reviews.map((item, index) => (
+                      {filteredReviews.map((item, index) => (
                         <li key={index} className="mb-4">
-                          <h6>{item.name}</h6>
+                          <h6 className="mb-1 fw-bold ">{item.name}</h6>
                           <span>{item.rating} (rating)</span>
                           <p>{item.message}</p>
                         </li>

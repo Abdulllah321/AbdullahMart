@@ -19,6 +19,10 @@ import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../redux/slices/cartSlice";
 
+
+
+
+
 const Header = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -30,6 +34,12 @@ const Header = () => {
 
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const profileActionRef = useRef(null);
+    useEffect(() => {
+      const storedCartItems = localStorage.getItem("cartItems");
+      if (storedCartItems) {
+        dispatch(cartActions.loadCartItems(JSON.parse(storedCartItems)));
+      }
+    }, []);
 
   const navigate = useNavigate();
   const { currentUser } = useAuth();

@@ -39,7 +39,14 @@ const cartSlice = createSlice({
 
       // Store cartItems in local storage
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+      localStorage.setItem(
+        "totalQuantity",
+        JSON.stringify(state.totalQuantity)
+      );
+
     },
+
+    
     deleteItem: (state, action) => {
       const id = action.payload;
       const existingItem = state.cartItems.find((item) => item.id === id);
@@ -56,6 +63,10 @@ const cartSlice = createSlice({
 
       // Update local storage after removing item
       localStorage.setItem("cartItems", JSON.stringify(state.cartItems));
+      localStorage.setItem(
+        "totalQuantity",
+        JSON.stringify(state.totalQuantity)
+      );
     },
     updateQuantity: (state, action) => {
       const { id, quantity } = action.payload;
