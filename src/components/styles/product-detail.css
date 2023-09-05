@@ -1,0 +1,147 @@
+.product-detail {
+  margin-top: 50px;
+}
+.product-detail h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.product-rating svg {
+  color: coral;
+}
+.product-rating p span {
+  color: coral;
+  font-weight: 500;
+}
+.product-price {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.tab-wrapper {
+  color: var(--primary-color);
+}
+
+.tab-wrapper h6 {
+  color: var(--primary-color);
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.active-tab {
+  font-weight: 700 !important;
+}
+
+.tab-content p {
+  line-height: 30px;
+}
+
+.review-wrapper ul li span {
+  color: coral;
+  font-weight: 600;
+}
+
+.review-wrapper ul li p {
+  margin-top: 10px;
+}
+
+.review-form {
+  width: 70%;
+  margin: auto;
+  margin-top: 50px;
+
+}
+.review-form h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+.rating-group{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 20px;
+  margin-bottom: 15px;
+  width: 50%;
+}
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  padding: 8px 20px;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+}
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+.form-group span svg {
+  display: flex;
+  flex-direction: row;
+  color: coral;
+  transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: pulse 1s forwards;
+  font-size: 1.3rem;
+}
+.form-group span svg:nth-child(1) {
+  animation-delay: 0;
+}
+.form-group span svg:nth-child(2) {
+  animation-delay: 0.2;
+}
+.form-group span svg:nth-child(3) {
+  animation-delay: 0.4;
+}
+.form-group span svg:nth-child(4) {
+  animation-delay: 0.6;
+}
+.form-group span svg:nth-child(5) {
+  animation-delay: 0.8;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    color: gray;
+  }
+  50% {
+    transform: scale(1.3);
+    color: coral;
+  }
+  100% {
+    transform: scale(1);
+    -webkit-text-fill-color: coral;
+    -webkit-text-stroke-color: darken(coral, 20);
+  }
+}
+
+.related-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 30px;
+}
+
+@media only screen and (max-width:768px){
+  .product-detail h2{
+    font-size: 1.3rem;
+  }
+  .rating-group{
+    width: 70%;
+  }
+  
+  
+}
+@media only screen and (max-width:576px){
+  .review-form{
+    width: 90%;
+  }
+  .rating-group{
+    width: 90%;
+  }
+}

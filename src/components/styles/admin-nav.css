@@ -1,0 +1,32 @@
+.admin-header {
+  width: 100%;
+  height: auto;
+  background: var(--primary-color);
+  color: #fff;
+}
+.admin-nav-top {
+  width: 100%;
+  height: 100px;
+}
+
+.admin-nav-wrapper-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-nav-top .search-box {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+}
+
+.admin-nav-top-right img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    z-index: 99;
+    position: relative;
+}

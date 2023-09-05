@@ -1,0 +1,25 @@
+.common-section{
+    background: linear-gradient(#0000008c, #00000049) ,url(https://images.unsplash.com/photo-1596436889106-be35e843f974?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80) no-repeat center center;
+    background-size: cover;
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 0;
+
+}
+.common-section h1
+{
+    color: #fff;
+    font-weight: 600;
+}
+
+@media only screen and (max-width: 768px) { 
+    .common-section{
+        padding: 70px 0;
+
+    }
+    .common-section h1{
+        font-size: 1.4rem;
+    }
+}
