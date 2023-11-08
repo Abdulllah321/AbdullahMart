@@ -28,13 +28,15 @@ const ProductsCart = ({ item }) => {
   return (
     <Col lg="3" md="4" sm="6" xs="10" className="Product">
       <div className="product-item">
-        <div className="product-img overflow-hidden">
-          <motion.img
-            whileHover={{ scale: 1.1 }}
-            src={item.imgUrl}
-            alt="Product Image"
-          />
-        </div>
+        <Link to={`/shop/${item.id}`}>
+          <div className="product-img overflow-hidden">
+            <motion.img
+              whileHover={{ scale: 1.1 }}
+              src={item.imgUrl}
+              alt="Product Image"
+            />
+          </div>
+        </Link>
         <Link to={`/shop/${item.id}`}>
           <div className="p-2 product-info">
             <h3 className="product-name">{item.productName}</h3>
@@ -42,7 +44,9 @@ const ProductsCart = ({ item }) => {
           </div>
         </Link>
         <div className="product-card-bottom d-flex align-items-center justify-content-between p-2 relative bottom-0">
+        <Link to={`/shop/${item.id}`}>
           <span className="price">$&nbsp;{item.price}</span>
+        </Link>
           <motion.span
             whileTap={{ scale: 1.2 }}
             className="add"

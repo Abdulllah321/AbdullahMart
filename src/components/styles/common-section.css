@@ -23,3 +23,13 @@
         font-size: 1.4rem;
     }
 }
+
+.whatsapp-float{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 3rem;
+    color: #075e54;
+    cursor: pointer;
+    /* mix-blend-mode: difference; */
+}

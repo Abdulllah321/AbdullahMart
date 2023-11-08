@@ -1,0 +1,37 @@
+.revenue-box,
+.order-box,
+.tp-box,
+.tu-box {
+  padding: 20px;
+  border-radius: 5px;
+}
+.revenue-box {
+  background: var(--card-bg-01);
+}
+.order-box {
+  background: var(--card-bg-02);
+}
+.tp-box {
+  background: var(--card-bg-03);
+}
+.tu-box {
+  background: var(--card-bg-04);
+}
+.revenue-box h5,
+.order-box h5,
+.tp-box h5,
+.tu-box h5 {
+    font-size: 1.1rem;
+    font-weight: 500px;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.revenue-box span,
+.order-box span,
+.tp-box span,
+.tu-box span {
+    color: var(--primary-color);
+    font-size: 2rem;
+    font-weight: 600;
+}

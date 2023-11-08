@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import '../styles/clock.css'
+import "../styles/clock.css";
 
 const Clock = () => {
   const [days, setDays] = useState();
@@ -7,32 +7,41 @@ const Clock = () => {
   const [minutes, setMinutes] = useState();
   const [seconds, setSeconds] = useState();
 
-  let interval;
-  const countDown = () => {
-    const destination = new Date("Nov 24, 2023 4:00:am"); // Add the desired time to the date string
-  
-    interval = setInterval(() => {
-      const now = new Date().getTime();
-      const difference = destination - now;
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-  
-      if (destination < 0) {
-        clearInterval(interval.current);
-      } else {
-        setDays(days);
-        setHours(hours);
-        setMinutes(minutes);
-        setSeconds(seconds);
-      }
-    });
-  };
+  useEffect(() => {
+    let interval;
 
-  useEffect(()=>{
-    countDown()
-  },[countDown])
+    const countDown = () => {
+      const destination = new Date("Nov 24, 2023 4:00:am"); // Add the desired time to the date string
+
+      interval = setInterval(() => {
+        const now = new Date().getTime();
+        const difference = destination - now;
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        if (destination < 0) {
+          clearInterval(interval);
+        } else {
+          setDays(days);
+          setHours(hours);
+          setMinutes(minutes);
+          setSeconds(seconds);
+        }
+      });
+    };
+
+    countDown();
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <div className="clock-wrapper d-flex align-items-center gap-3">

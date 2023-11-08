@@ -58,8 +58,11 @@ const Shops = () => {
   const handleSearch = (e) => {
     const searchTerm = e.target.value;
 
-    const searchedProducts = products.filter((item) =>
-      item.productName.toLowerCase().includes(searchTerm.toLowerCase())
+    const searchedProducts = products.filter(
+      (item) =>
+        item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     setProductsData(searchedProducts);

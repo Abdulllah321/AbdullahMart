@@ -1,6 +1,6 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Form, FormGroup } from "reactstrap";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../custom hook/useAuth";
 import { toast } from "react-toastify";
@@ -12,6 +12,7 @@ import "../styles/checkout.css";
 const Checkout = () => {
   const totalQty = useSelector((state) => state.cart.totalQuantity);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
+  const cartItems = useSelector((state) => state.cart.cartItems);
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
@@ -30,54 +31,70 @@ const Checkout = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-const handlePlaceOrder = () => {
-  const { name, email, phoneNumber, address, city, postalCode, country } =
-    formData;
+   const orderItems = cartItems.map((item) => ({
+     productName: item.productName,
+     price: item.price,
+     quantity: item.quantity,
+   }));
 
-  const emptyFields = [];
+  const handlePlaceOrder = async (e) => {
+    e.preventDefault();
+     const { name, email, phoneNumber, address, city, postalCode, country } =
+       formData;
 
-  if (name.trim() === "") {
-    emptyFields.push("Name");
-  }
+  const orderData = {
+    name,
+    email,
+    phoneNumber,
+    address,
+    city,
+    postalCode,
+    country,
+    totalQty,
+    totalAmount,
+    cartItems: orderItems,
+  };
 
-  if (email.trim() === "") {
-    emptyFields.push("Email");
-  }
+    const res = fetch(
+      "https://abdullahmart-94047-default-rtdb.asia-southeast1.firebasedatabase.app/order.json",
+      {
+        method: "POST",
+        header: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      }
+    );
+ 
 
-  if (phoneNumber.trim() === "") {
-    emptyFields.push("Phone number");
-  }
+    // const requiredFields = [
+    //   "Name",
+    //   "Email",
+    //   "Phone number",
+    //   "Street address",
+    //   "City",
+    //   "Postal Code",
+    //   "Country",
+    // ];
+    // const emptyFields = requiredFields.filter(
+    //   (field) => formData[field.toLowerCase()].trim() === ""
+    // );
 
-  if (address.trim() === "") {
-    emptyFields.push("Street address");
-  }
-
-  if (city.trim() === "") {
-    emptyFields.push("City");
-  }
-
-  if (postalCode.trim() === "") {
-    emptyFields.push("Postal Code");
-  }
-
-  if (country.trim() === "") {
-    emptyFields.push("Country");
-  }
-
-  if (emptyFields.length > 0) {
-    emptyFields.forEach((field) => {
-      toast.error(`${field} is required`);
-    });
-  } else {
-    if (currentUser) {
-      navigate("/shop");
-      toast.success("Order placed successfully");
-    } else {
-      toast.info("Please log in to place an order");
-      navigate("/login");
-    }
-  }
-};
+    // if (emptyFields.length > 0) {
+    //   emptyFields.forEach((field) => {
+    //     toast.error(`${field} is required`);
+    //   });
+    // } else {
+      if (currentUser && res) {
+        navigate("/shop");
+        toast.success("Order placed successfully");
+      }
+      if (!currentUser) {
+        toast.info("Please log in to place an order");
+        navigate("/login");
+      }
+    // }
+  };
 
   return (
     <Helmet title="Checkout">
@@ -155,6 +172,14 @@ const handlePlaceOrder = () => {
             </Col>
             <Col lg="4">
               <div className="checkout-cart">
+                <h2 className="d-block text-align-center border-bottom border-1 border-white py-2 mb-4">
+                  <span>
+                    {cartItems.map((item, index) => (
+                      <Tr item={item} key={index} />
+                    ))}{" "}
+                  </span>
+                </h2>
+
                 <h6>
                   Total Qty: <span>{totalQty} items</span>
                 </h6>
@@ -188,3 +213,13 @@ const handlePlaceOrder = () => {
 };
 
 export default Checkout;
+
+const Tr = ({ item }) => {
+  return (
+    <div className="d-flex justify-content-between">
+      <h6>{item.productName}</h6>
+      <h6>$ &nbsp;{item.price}</h6>
+      <h5 className="d-none">{item.quantity}</h5>
+    </div>
+  );
+};

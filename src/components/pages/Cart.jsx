@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 
 const Cart = () => {
-  const dispatch = useDispatch(); // Add this line to define 'dispatch'
+  const dispatch = useDispatch(); 
 
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);

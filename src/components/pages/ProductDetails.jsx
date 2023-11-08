@@ -11,8 +11,15 @@ import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { cartActions } from "../redux/slices/cartSlice";
 import { toast } from "react-toastify";
-
-
+import { db } from "../../firebase.config";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 
 const localStorageReviews = () => {
   let rev = localStorage.getItem("reviews");
@@ -24,11 +31,7 @@ const localStorageReviews = () => {
   }
 };
 
-
 const ProductDetails = () => {
-
-
-
   const [hoverRating, setHoverRating] = useState(null);
   const dispatch = useDispatch();
   const reviewForm = useRef(null);
@@ -58,12 +61,11 @@ const ProductDetails = () => {
   const [rating, setRating] = useState(null);
   // const [clicked, setClicked] = useState(false);
 
-useEffect(()=>{
- localStorage.setItem("reviews", JSON.stringify(reviews));
-},[reviews])
+  useEffect(() => {
+    localStorage.setItem("reviews", JSON.stringify(reviews));
+  }, [reviews]);
 
-
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
 
     let hasError = false;
@@ -100,15 +102,38 @@ useEffect(()=>{
       message: reviewUserMsg,
     };
 
-    setReviews((prevReviews) => [...prevReviews, reviewObj]);
+    try {
+      const docRef = await addDoc(collection(db, "reviews"), reviewObj);
+      console.log("Review added with ID: ", docRef.id);
 
-    toast.success("Review submitted");
+      setReviews((prevReviews) => [...prevReviews, reviewObj]);
 
-    e.target.reset();
+      toast.success("Review submitted");
 
-    setRating(null);
+      e.target.reset();
+
+      setRating(null);
+    } catch (error) {
+      console.error("Error adding review: ", error);
+      toast.error("Error submitting review");
+    }
     // setClicked(false);
   };
+
+  useEffect(() => {
+    // Fetch reviews from Firestore when the component mounts
+    const fetchReviews = async () => {
+      const firestore = getFirestore();
+      const reviewsCollection = collection(firestore, "reviews");
+      const reviewsQuery = query(reviewsCollection, where("id", "==", id));
+
+      const snapshot = await getDocs(reviewsQuery);
+      const reviewsData = snapshot.docs.map((doc) => doc.data());
+      setReviews(reviewsData);
+    };
+
+    fetchReviews();
+  }, [id]);
 
   const filteredReviews = reviews.filter((item) => item.id === id);
 
@@ -126,7 +151,6 @@ useEffect(()=>{
 
   function handleClick(rating) {
     setRating(rating);
-    // setClicked(true);
   }
 
   const starElements = Array.from(

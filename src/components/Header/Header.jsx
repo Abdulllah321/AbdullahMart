@@ -15,36 +15,33 @@ import useAuth from "../../custom hook/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase.config";
 import { toast } from "react-toastify";
-
 import { useSelector, useDispatch } from "react-redux";
 import { cartActions } from "../redux/slices/cartSlice";
-
-
-
-
 
 const Header = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     dispatch(cartActions.loadCartItems(cartItems));
   }, [dispatch, cartItems]);
 
-
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const profileActionRef = useRef(null);
-    useEffect(() => {
-      const storedCartItems = localStorage.getItem("cartItems");
-      if (storedCartItems) {
-        dispatch(cartActions.loadCartItems(JSON.parse(storedCartItems)));
-      }
-    }, [dispatch]);
+  useEffect(() => {
+    const storedCartItems = localStorage.getItem("cartItems");
+    if (storedCartItems) {
+      dispatch(cartActions.loadCartItems(JSON.parse(storedCartItems)));
+    }
+  }, [dispatch]);
 
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
   const [scrolled, setScrolled] = useState(false);
+  const toggleBtn = useRef()
+
   const handleScroll = () => {
     const offset = window.scrollY;
     if (offset > 80) {
@@ -55,9 +52,10 @@ const Header = () => {
   };
 
   const logout = () => {
-    signOut(auth).then(() => {
+    signOut(auth)
+      .then(() => {
         toast.success("Logged out");
-        navigate("/")
+        navigate("/");
       })
       .catch((err) => {
         toast.error(err.message);
@@ -94,12 +92,19 @@ const Header = () => {
     navigate("/cart");
   };
 
-  const toggleProfileActions = () =>
-    profileActionRef.current.classList.toggle("show-profileActions");
-
-
-
+  useEffect(() => {
+    const closeOpen = (e) => {
+      if(e.target !== toggleBtn.current) {
+        setIsOpen(false);
+      }
+      // console.log(e.target);
+    };
+    document.body.addEventListener("click", closeOpen);
     
+    return ()=>
+    document.body.removeEventListener("click", closeOpen);
+  });
+
   return (
     <header className={`header ${scrolled ? "sticky-header" : ""}`}>
       <Container>
@@ -145,9 +150,14 @@ const Header = () => {
                   whileTap={{ scale: 1.2 }}
                   src={currentUser?.photoURL || user}
                   alt=""
-                  onClick={toggleProfileActions}
+                  onClick={() => setIsOpen((prev) => !prev)}
+                  ref={toggleBtn}
                 />
-                <div className="profile-actions" ref={profileActionRef}>
+                <div
+                  className={`profile-actions ${
+                    isOpen ? "show-profileActions" : ""
+                  }`}
+                >
                   {currentUser ? (
                     <div>
                       <span>{currentUser.displayName}</span>
