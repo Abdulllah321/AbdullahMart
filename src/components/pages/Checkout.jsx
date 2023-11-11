@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, FormGroup } from "reactstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../custom hook/useAuth";
 import { toast } from "react-toastify";
@@ -8,6 +8,8 @@ import Helmet from "../Helmet/Helmet";
 import CommonSection from "../UI/CommonSection";
 
 import "../styles/checkout.css";
+import { db } from "../../firebase.config";
+import { addDoc, collection } from "firebase/firestore";
 
 const Checkout = () => {
   const totalQty = useSelector((state) => state.cart.totalQuantity);
@@ -31,16 +33,19 @@ const Checkout = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-   const orderItems = cartItems.map((item) => ({
-     productName: item.productName,
-     price: item.price,
-     quantity: item.quantity,
-   }));
+  const orderItems = cartItems.map((item) => ({
+    productName: item.productName,
+    price: item.price,
+    quantity: item.quantity,
+  }));
 
-  const handlePlaceOrder = async (e) => {
-    e.preventDefault();
-     const { name, email, phoneNumber, address, city, postalCode, country } =
-       formData;
+const handlePlaceOrder = async (e) => {
+  e.preventDefault();
+  const { name, email, phoneNumber, address, city, postalCode, country } =
+    formData;
+  const UserName = currentUser?.displayName || "";
+  const UserUid = currentUser?.uid || "";
+  const UserEmail = currentUser?.email || "";
 
   const orderData = {
     name,
@@ -53,48 +58,52 @@ const Checkout = () => {
     totalQty,
     totalAmount,
     cartItems: orderItems,
+    timestamp: new Date(),
+    UserName,
+    UserUid,
+    UserEmail,
   };
 
-    const res = fetch(
-      "https://abdullahmart-94047-default-rtdb.asia-southeast1.firebasedatabase.app/order.json",
-      {
-        method: "POST",
-        header: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      }
-    );
- 
+  // Validate form fields
+  const requiredFields = [
+    "name",
+    "email",
+    "phoneNumber",
+    "address",
+    "city",
+    "postalCode",
+    "country",
+  ];
 
-    // const requiredFields = [
-    //   "Name",
-    //   "Email",
-    //   "Phone number",
-    //   "Street address",
-    //   "City",
-    //   "Postal Code",
-    //   "Country",
-    // ];
-    // const emptyFields = requiredFields.filter(
-    //   (field) => formData[field.toLowerCase()].trim() === ""
-    // );
+  const emptyFields = requiredFields.filter(
+    (field) => !formData[field] || formData[field].trim() === ""
+  );
 
-    // if (emptyFields.length > 0) {
-    //   emptyFields.forEach((field) => {
-    //     toast.error(`${field} is required`);
-    //   });
-    // } else {
-      if (currentUser && res) {
+  if (emptyFields.length > 0) {
+    emptyFields.forEach((field) => {
+      toast.error(`${field} is required`);
+    });
+  } else {
+    try {
+      // Save order details to the database
+      const orderRef = await addDoc(collection(db, "orders"), orderData);
+      console.log("Order ID: ", orderRef.id);
+
+      if (currentUser) {
         navigate("/shop");
         toast.success("Order placed successfully");
       }
+
       if (!currentUser) {
         toast.info("Please log in to place an order");
         navigate("/login");
       }
-    // }
-  };
+    } catch (error) {
+      console.error("Error placing order: ", error);
+      toast.error("Failed to place the order. Please try again later.");
+    }
+  }
+};
 
   return (
     <Helmet title="Checkout">

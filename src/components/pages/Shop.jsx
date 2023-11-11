@@ -1,87 +1,62 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "../styles/shop.css";
-
 import CommonSection from "../UI/CommonSection";
 import Helmet from "../../components/Helmet/Helmet";
 import { Container, Row, Col } from "reactstrap";
 import { FiSearch } from "react-icons/fi";
-
-import products from "../../assets/data/products";
 import ProductList from "../UI/ProductsList";
+import useGetData from "../../custom hook/useGetData";
 
 const Shops = () => {
-  const [productsData, setProductsData] = useState(products);
+  const { data: products } = useGetData("products");
+  const [filterValue, setFilterValue] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortValue, setSortValue] = useState("");
+
+  const filteredProducts = useMemo(() => {
+    let filtered = [...products];
+
+    if (filterValue === "sofa") {
+      filtered = filtered.filter((item) => item.category === "sofa");
+    } else if (filterValue === "mobile") {
+      filtered = filtered.filter((item) => item.category === "mobile");
+    } else if (filterValue === "chair") {
+      filtered = filtered.filter((item) => item.category === "chair");
+    } else if (filterValue === "watch") {
+      filtered = filtered.filter((item) => item.category === "watch");
+    } else if (filterValue === "wireless") {
+      filtered = filtered.filter((item) => item.category === "wireless");
+    }
+
+    if (searchTerm) {
+      const searchTermLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (item) =>
+          item.productName.toLowerCase().includes(searchTermLower) ||
+          item.description.toLowerCase().includes(searchTermLower) ||
+          item.category.toLowerCase().includes(searchTermLower)
+      );
+    }
+
+    if (sortValue === "ascending") {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortValue === "descending") {
+      filtered.sort((a, b) => b.price - a.price);
+    }
+
+    return filtered;
+  }, [products, filterValue, searchTerm, sortValue]);
 
   const handleFilter = (e) => {
-    const filterValue = e.target.value;
-    if (filterValue === "sofa") {
-      const filteredProducts = products.filter(
-        (item) => item.category === "sofa"
-      );
-      setProductsData(filteredProducts);
-    }
-
-    if (filterValue === "mobile") {
-      const filteredProducts = products.filter(
-        (item) => item.category === "mobile"
-      );
-      setProductsData(filteredProducts);
-    }
-
-    if (filterValue === "chair") {
-      const filteredProducts = products.filter(
-        (item) => item.category === "chair"
-      );
-      setProductsData(filteredProducts);
-    }
-
-    if (filterValue === "watch") {
-      const filteredProducts = products.filter(
-        (item) => item.category === "watch"
-      );
-      setProductsData(filteredProducts);
-    }
-
-    if (filterValue === "wireless") {
-      const filteredProducts = products.filter(
-        (item) => item.category === "wireless"
-      );
-      setProductsData(filteredProducts);
-    }
-
-    if (filterValue === "") {
-      const filteredProducts = products.filter((item) => item);
-      setProductsData(filteredProducts);
-    }
+    setFilterValue(e.target.value);
   };
 
   const handleSearch = (e) => {
-    const searchTerm = e.target.value;
-
-    const searchedProducts = products.filter(
-      (item) =>
-        item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    setProductsData(searchedProducts);
+    setSearchTerm(e.target.value);
   };
 
   const handleSort = (e) => {
-    const sortValue = e.target.value;
-
-    const sortedProducts = [...productsData].sort((a, b) => {
-      if (sortValue === "ascending") {
-        return a.price - b.price;
-      } else if (sortValue === "descending") {
-        return b.price - a.price;
-      } else {
-        return 0;
-      }
-    });
-
-    setProductsData(sortedProducts);
+    setSortValue(e.target.value);
   };
 
   return (
@@ -131,10 +106,10 @@ const Shops = () => {
       <section>
         <Container>
           <Row>
-            {productsData.length === 0 ? (
+            {filteredProducts.length === 0 ? (
               <h1 className="text-center">No products found.</h1>
             ) : (
-              <ProductList data={productsData} />
+              <ProductList data={filteredProducts} />
             )}
           </Row>
         </Container>

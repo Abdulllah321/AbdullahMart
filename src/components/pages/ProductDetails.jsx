@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Row, Col } from "reactstrap";
 import { useParams } from "react-router-dom";
-import products from "../../assets/data/products";
+// import products from "../../assets/data/products";
 import Helmet from "../Helmet/Helmet";
 import CommonSection from "../UI/CommonSection";
 import { ImStarFull, ImStarHalf, ImStarEmpty } from "react-icons/im";
@@ -12,14 +12,8 @@ import { useDispatch } from "react-redux";
 import { cartActions } from "../redux/slices/cartSlice";
 import { toast } from "react-toastify";
 import { db } from "../../firebase.config";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
+import useGetData from "../../custom hook/useGetData";
 
 const localStorageReviews = () => {
   let rev = localStorage.getItem("reviews");
@@ -32,13 +26,31 @@ const localStorageReviews = () => {
 };
 
 const ProductDetails = () => {
+  const [product, setProduct] = useState([]);
   const [hoverRating, setHoverRating] = useState(null);
   const dispatch = useDispatch();
   const reviewForm = useRef(null);
 
   const [tab, setTab] = useState("desc");
   const { id } = useParams();
-  const product = products.find((item) => item.id === id);
+  // const product = products.find((item) => item.id === id);
+
+  const docRef = doc(db, "products", id);
+  useEffect(() => {
+    const getProduct = async () => {
+      const docSnap = await getDoc(docRef);
+
+      if(docSnap.exists()) {
+        setProduct(docSnap.data())
+      } else{
+        console.log('product not found');
+      }
+    };
+    getProduct();
+    
+  }, []);
+
+  const {data: products} = useGetData('products')
 
   const {
     imgUrl,
@@ -65,7 +77,7 @@ const ProductDetails = () => {
     localStorage.setItem("reviews", JSON.stringify(reviews));
   }, [reviews]);
 
-  const submitHandler = async (e) => {
+  const submitHandler = (e) => {
     e.preventDefault();
 
     let hasError = false;
@@ -102,38 +114,15 @@ const ProductDetails = () => {
       message: reviewUserMsg,
     };
 
-    try {
-      const docRef = await addDoc(collection(db, "reviews"), reviewObj);
-      console.log("Review added with ID: ", docRef.id);
+    setReviews((prevReviews) => [...prevReviews, reviewObj]);
 
-      setReviews((prevReviews) => [...prevReviews, reviewObj]);
+    toast.success("Review submitted");
 
-      toast.success("Review submitted");
+    e.target.reset();
 
-      e.target.reset();
-
-      setRating(null);
-    } catch (error) {
-      console.error("Error adding review: ", error);
-      toast.error("Error submitting review");
-    }
+    setRating(null);
     // setClicked(false);
   };
-
-  useEffect(() => {
-    // Fetch reviews from Firestore when the component mounts
-    const fetchReviews = async () => {
-      const firestore = getFirestore();
-      const reviewsCollection = collection(firestore, "reviews");
-      const reviewsQuery = query(reviewsCollection, where("id", "==", id));
-
-      const snapshot = await getDocs(reviewsQuery);
-      const reviewsData = snapshot.docs.map((doc) => doc.data());
-      setReviews(reviewsData);
-    };
-
-    fetchReviews();
-  }, [id]);
 
   const filteredReviews = reviews.filter((item) => item.id === id);
 
@@ -151,6 +140,7 @@ const ProductDetails = () => {
 
   function handleClick(rating) {
     setRating(rating);
+    // setClicked(true);
   }
 
   const starElements = Array.from(

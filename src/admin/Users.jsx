@@ -2,26 +2,34 @@ import React from "react";
 import { Container, Row, Col } from "reactstrap";
 import useGetData from "../custom hook/useGetData";
 import { db } from "../firebase.config";
-import { deleteDoc, doc } from "firebase/firestore";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 
 const Users = () => {
   const { data: userData, loading } = useGetData("users");
-const deleteUser = async (id)=> {
-    await deleteDoc(doc(db, 'users', id))
-}
 
-//   console.log(userData);
+  const deleteUser = async (id) => {
+    await deleteDoc(doc(db, "users", id));
+  };
+
+  const toggleAdminStatus = async (id, isAdmin) => {
+    // Toggle the 'isAdmin' field in Firestore
+    await updateDoc(doc(db, "users", id), {
+      isAdmin: !isAdmin,
+    });
+  };
+
   return (
     <section>
       <Container>
         <Row>
-          <Col lg1="2">
+          <Col lg="12">
             <table className="table">
               <thead>
                 <tr>
                   <th>Image</th>
                   <th>Username</th>
                   <th>Email</th>
+                  <th>Admin</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -32,7 +40,7 @@ const deleteUser = async (id)=> {
                     className="d-flex align-items-center justify-content-center"
                   >
                     <div className="loader d-flex align-items-center justify-content-center">
-                      <div class="spinner"></div>
+                      <div className="spinner"></div>
                     </div>
                   </Col>
                 ) : (
@@ -43,8 +51,22 @@ const deleteUser = async (id)=> {
                       </td>
                       <td>{user.displayName}</td>
                       <td>{user.email}</td>
+                      <td>{user.isAdmin ? "Admin" : "User"}</td>
                       <td>
-                        <button className="btn btn-danger" onClick={() => deleteUser(user.uid)}>Delete</button>
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => deleteUser(user.uid)}
+                        >
+                          Delete
+                        </button>
+                        <button
+                          className="btn btn-primary ms-2"
+                          onClick={() =>
+                            toggleAdminStatus(user.uid, user.isAdmin)
+                          }
+                        >
+                          {user.isAdmin ? "Remove Admin" : "Make Admin"}
+                        </button>
                       </td>
                     </tr>
                   ))

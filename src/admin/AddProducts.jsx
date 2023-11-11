@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const AddProducts = () => {
-  const [enterTitle, setEnterTitle] = useState("");
+  const [enterProductName, setEnterProductName] = useState("");
   const [enterShortDesc, setEnterShortDesc] = useState("");
   const [enterDescription, setEnterDescription] = useState("");
   const [enterCategory, setEnterCategory] = useState("");
@@ -17,56 +17,63 @@ const AddProducts = () => {
   const [loading, setLoading] =useState(false);
   const navigate = useNavigate()
 
- const addProduct = async (e) => {
-   e.preventDefault();
+const addProduct = async (e) => {
+  e.preventDefault();
 
-   if (!enterProductImg) {
-     toast.error("Please select a product image.");
-     return;
-   }
+  // Validate form fields
+  if (
+    !enterProductName ||
+    !enterShortDesc ||
+    !enterDescription ||
+    !enterCategory ||
+    !enterPrice ||
+    !enterProductImg
+  ) {
+    toast.error("Please fill in all fields.");
+    return;
+  }
 
-   try {
-     setLoading(true);
-     const storageRef = ref(
-       storage,
-       `productImages/${Date.now() + enterProductImg.name}`
-     );
-     const uploadTask = uploadBytesResumable(storageRef, enterProductImg);
+  try {
+    setLoading(true);
+    const storageRef = ref(
+      storage,
+      `productImages/${Date.now() + enterProductImg.name}`
+    );
+    const uploadTask = uploadBytesResumable(storageRef, enterProductImg);
 
-     uploadTask.on(
-       "state_changed",
-       null,
-       (error) => {
-         toast.error("Error uploading image: " + error.message);
-         setLoading(false);
-       },
-       () => {
-         getDownloadURL(uploadTask.snapshot.ref)
-           .then(async (downloadURL) => {
-              await addDoc(collection(db, "products"), {
-               title: enterTitle,
-               shortDes: enterShortDesc,
-               description: enterDescription,
-               category: enterCategory,
-               price: enterPrice,
-               imgUrl: downloadURL,
-             });
-             toast.success("Product added successfully");
-            //  console.log(docRef);
-             setLoading(false);
-             navigate("/dashboard/all-products")
-           })
-           .catch((error) => {
-             toast.error("Error getting download URL: " + error.message);
-             setLoading(false);
-           });
-       }
-     );
-   } catch (error) {
-     toast.error("Error adding product: " + error.message);
-     setLoading(false);
-   }
- };
+    uploadTask.on(
+      "state_changed",
+      null,
+      (error) => {
+        toast.error("Error uploading image: " + error.message);
+        setLoading(false);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref)
+          .then(async (downloadURL) => {
+            await addDoc(collection(db, "products"), {
+              productName: enterProductName,
+              shortDes: enterShortDesc,
+              description: enterDescription,
+              category: enterCategory,
+              price: enterPrice,
+              imgUrl: downloadURL,
+            });
+            toast.success("Product added successfully");
+            setLoading(false);
+            navigate("/all-products");
+          })
+          .catch((error) => {
+            toast.error("Error getting download URL: " + error.message);
+            setLoading(false);
+          });
+      }
+    );
+  } catch (error) {
+    toast.error("Error adding product: " + error.message);
+    setLoading(false);
+  }
+};
 
 
   return (
@@ -85,12 +92,12 @@ const AddProducts = () => {
               <>
                 <Form className="add_form" onSubmit={addProduct}>
                   <FormGroup className="form-group">
-                    <span>Product title</span>
+                    <span>Product Name</span>
                     <input
                       type="text"
                       placeholder="Watch"
-                      value={enterTitle}
-                      onChange={(e) => setEnterTitle(e.target.value)}
+                      value={enterProductName}
+                      onChange={(e) => setEnterProductName(e.target.value)}
                     />
                   </FormGroup>
 
@@ -133,6 +140,7 @@ const AddProducts = () => {
                         value={enterCategory}
                         onChange={(e) => setEnterCategory(e.target.value)}
                       >
+                        <option>Select Category</option>
                         <option value="chair">Chair</option>
                         <option value="sofa">Sofa</option>
                         <option value="mobile">Mobile</option>

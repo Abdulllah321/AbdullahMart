@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 // import user from "../assets/images/user-icon.png";
 import "../components/styles/admin-nav.css";
 import useAuth from "../custom hook/useAuth";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const admin_nav = [
   {
@@ -16,16 +16,20 @@ const admin_nav = [
     path: "/dashboard",
   },
   {
+    display: "Add Products",
+    path: "/add-products",
+  },
+  {
     display: "All Products",
-    path: "/dashboard/all-products",
+    path: "/all-products",
   },
   {
     display: "Orders",
-    path: "/dashboard/orders",
+    path: "/orders",
   },
   {
     display: "Users",
-    path: "/dashboard/users",
+    path: "/users",
   },
 ];
 
@@ -39,7 +43,9 @@ const AdminNav = () => {
           <Container>
             <div className="admin-nav-wrapper-top">
               <div className="logo">
-                <h2>AbdullahMart</h2>
+                <Link to={`/`}>
+                 <h2>AbdullahMart</h2>
+                </Link>
               </div>
 
               <div className="search-box">

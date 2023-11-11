@@ -8,6 +8,7 @@ import {
   RiHeartLine,
   RiMenuFoldLine,
   RiLogoutBoxLine,
+  RiDashboardFill,
 } from "react-icons/ri";
 import logo from "../../assets/images/eco-logo.png";
 import user from "../../assets/images/user-icon.png";
@@ -28,7 +29,7 @@ const Header = () => {
   }, [dispatch, cartItems]);
 
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
-  const profileActionRef = useRef(null);
+  // const profileActionRef = useRef(null);
   useEffect(() => {
     const storedCartItems = localStorage.getItem("cartItems");
     if (storedCartItems) {
@@ -37,10 +38,12 @@ const Header = () => {
   }, [dispatch]);
 
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const { currentUser, isAdmin } = useAuth();
+
+ 
 
   const [scrolled, setScrolled] = useState(false);
-  const toggleBtn = useRef()
+  const toggleBtn = useRef();
 
   const handleScroll = () => {
     const offset = window.scrollY;
@@ -94,17 +97,15 @@ const Header = () => {
 
   useEffect(() => {
     const closeOpen = (e) => {
-      if(e.target !== toggleBtn.current) {
+      if (e.target !== toggleBtn.current) {
         setIsOpen(false);
       }
       // console.log(e.target);
     };
     document.body.addEventListener("click", closeOpen);
-    
-    return ()=>
-    document.body.removeEventListener("click", closeOpen);
-  });
 
+    return () => document.body.removeEventListener("click", closeOpen);
+  });
   return (
     <header className={`header ${scrolled ? "sticky-header" : ""}`}>
       <Container>
@@ -161,13 +162,20 @@ const Header = () => {
                   {currentUser ? (
                     <div>
                       <span>{currentUser.displayName}</span>
+                      {isAdmin && (
+                        <span>
+                          <Link to="/dashboard">
+                            <RiDashboardFill />
+                            Dashboard
+                          </Link>
+                        </span>
+                      )}
                       <span onClick={logout}>
                         <RiLogoutBoxLine /> &nbsp; Logout
                       </span>
                     </div>
                   ) : (
                     <div>
-                      <Link to="/dashboard">dashboard</Link>
                       <Link to="/signup">Signup</Link>
                       <Link to="/login">Login</Link>
                     </div>

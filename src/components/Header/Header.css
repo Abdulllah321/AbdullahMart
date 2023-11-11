@@ -134,9 +134,9 @@ header::-webkit-scrollbar {
   font-size: 1.3rem;
 }
 
-.nav-icons .profile .profile-actions span:nth-child(2) {
+.nav-icons .profile .profile-actions span {
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin-top: 10px;
 }
 
